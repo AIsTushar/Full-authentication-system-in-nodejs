@@ -3,22 +3,42 @@
 import Input from "@/components/Input";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter";
 import { motion } from "framer-motion";
-import { Lock, Mail, User } from "lucide-react";
+import { Loader, Lock, Mail, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useAuthStore } from "../../store/authStore";
+import { useRouter } from "next/navigation";
 
 function Page() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { signup, error, isLoading } = useAuthStore();
+
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await signup(name, email, password);
+      router.push("/verify-email");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <motion.div className="max-w-md w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-md w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden"
+    >
       <div className="p-8">
         <h1 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text">
           Create Account
         </h1>
-        <from>
+        <form onSubmit={handleSubmit}>
           <Input
             icon={User}
             type="text"
@@ -40,6 +60,7 @@ function Page() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {error && <p className="text-red-500 font-semibold mt-2">{error}</p>}
           {/* Password Strength meter */}
           <PasswordStrengthMeter password={password} />
           <motion.button
@@ -50,10 +71,15 @@ function Page() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
+            disabled={isLoading}
           >
-            Sign Up
+            {isLoading ? (
+              <Loader className="animate-spin mx-auto" />
+            ) : (
+              "Sign Up"
+            )}
           </motion.button>
-        </from>
+        </form>
       </div>
       <div className="px-8 py-4 bg-gray-900 bg-opacity-50 flex justify-center">
         <p className="text-sm text-gray-400">

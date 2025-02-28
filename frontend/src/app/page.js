@@ -1,5 +1,10 @@
-import Image from "next/image";
+import Dashboard from "@/components/Dashboard";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function Home() {
-  return <div className="">Hello World!!</div>;
+  return (
+    <ProtectedRoute>
+      <Dashboard />
+    </ProtectedRoute>
+  );
 }
