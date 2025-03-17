@@ -51,8 +51,9 @@ function Page() {
 
     try {
       verifyEmail(verificationCode);
-      router.push("/");
       toast.success("Email verified successfully!", { duration: 5000 });
+
+      router.push("/");
     } catch (error) {
       console.log(error);
     }

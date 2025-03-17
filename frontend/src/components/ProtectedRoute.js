@@ -1,31 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function ProtectedRoute({ children }) {
-  const { isAuthenticated, checkAuth, user, isCheachingAuth, isLoading } =
+  const { isAuthenticated, checkAuth, user, isCheckingAuth, isLoading } =
     useAuthStore();
-
   const router = useRouter();
 
   useEffect(() => {
-    const verifyAuth = async () => {
-      await checkAuth();
-    };
+    checkAuth();
+  }, []);
 
-    verifyAuth();
-  }, [checkAuth]);
+  useEffect(() => {
+    if (!isCheckingAuth && !isLoading) {
+      if (!isAuthenticated || !user?.isVerified) {
+        router.replace("/login");
+      }
+    }
+  }, [isAuthenticated, user, isCheckingAuth, isLoading, router]);
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user?.isVerified) {
     router.replace("/login");
-    return null;
   }
 
-  if (!user.isVerified) {
-    router.replace("/login");
-    return null;
+  if (isCheckingAuth || isLoading) {
+    return <LoadingSpinner />;
   }
 
   return children;

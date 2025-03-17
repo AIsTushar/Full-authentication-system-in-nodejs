@@ -1,12 +1,12 @@
 "use client";
 
 import { useAuthStore } from "@/store/authStore";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import Input from "@/components/Input";
+import { Lock } from "lucide-react";
 
 function Page() {
   const [password, setPassword] = useState("");

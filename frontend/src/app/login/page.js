@@ -17,10 +17,14 @@ function Page() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    await login(email, password);
-    setEmail("");
-    setPassword("");
-    router.push("/");
+    try {
+      await login(email, password);
+      setEmail("");
+      setPassword("");
+      router.push("/");
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
 
   return (

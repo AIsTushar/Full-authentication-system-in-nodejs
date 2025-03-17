@@ -1,11 +1,10 @@
 import bcryptjs from "bcryptjs";
 import crypto from "crypto";
-
 import { User } from "../models/user.model.js";
-
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import {
   sendPasswordResetEmail,
+  sendPasswordResetSuccessEmail,
   sendVerificationEmail,
   sendWelcomeEmail,
 } from "../mailtrap/emails.js";
@@ -105,7 +104,7 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       return res
-        .status(40)
+        .status(400)
         .json({ success: false, message: "Invalid user credentials" });
     }
     const isPasswordValid = await bcryptjs.compare(password, user.password);
@@ -177,6 +176,8 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
+
+  console.log(token, password);
 
   try {
     const user = await User.findOne({

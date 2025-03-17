@@ -3,12 +3,20 @@
 import { motion } from "framer-motion";
 import { useAuthStore } from "@/store/authStore";
 import { formatDate } from "../utils/date";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 function Dashboard() {
-  const { user, logout } = useAuthStore();
+  const { user, logout, error } = useAuthStore();
+  const router = useRouter();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push("/login");
+    } catch (error) {
+      toast.error(error.message || "Error logging out");
+    }
   };
   return (
     <motion.div
